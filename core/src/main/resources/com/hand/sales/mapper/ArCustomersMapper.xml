@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sales.mapper.ArCustomersMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sales.dto.ArCustomers">
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+        <result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR"/>
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL"/>
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE"/>
+    </resultMap>
+
+    <select id="myByCustomer" resultMap="BaseResultMap">
+      SELECT
+            cu.CUSTOMER_ID,
+            cu.CUSTOMER_NUMBER,
+            cu.CUSTOMER_NAME,
+            cp.COMPANY_ID
+        FROM
+            hap_ar_customers cu,
+            hap_org_companys cp
+        WHERE
+            cu.COMPANY_ID = cp.COMPANY_ID
+            <if test="companyId!=null">
+                and cp.COMPANY_ID = #{companyId}
+            </if>
+    </select>
+</mapper>

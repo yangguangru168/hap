@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sales.mapper.OrgCompanysMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sales.dto.OrgCompanys">
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_NUMBER" property="companyNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR"/>
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL"/>
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE"/>
+    </resultMap>
+
+    <select id="myByCompany" resultMap="BaseResultMap">
+        SELECT
+            COMPANY_ID,
+            COMPANY_NUMBER,
+            COMPANY_NAME,
+            CREATION_DATE
+        FROM
+            hap_org_companys
+    </select>
+</mapper>

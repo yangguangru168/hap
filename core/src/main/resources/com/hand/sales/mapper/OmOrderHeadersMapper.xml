@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.sales.mapper.OmOrderHeadersMapper">
+    <resultMap id="BaseResultMap" type="com.hand.sales.dto.OmOrderHeaders">
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+    </resultMap>
+    <resultMap id="queryResultMap" type="com.hand.sales.dto.OmOrderHeaders">
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="sumPrice" property="sumPrice" jdbcType="DECIMAL"/>
+        <result column="INVENTORY_ITEM_ID" property="inventoryItemId" jdbcType="DECIMAL"/>
+
+    </resultMap>
+    <sql id="query">
+        hd.HEADER_ID as headerId,cp.COMPANY_ID as companyId,cu.CUSTOMER_ID as customerId,
+        hd.ORDER_NUMBER as orderNumber,cp.COMPANY_NAME as companyName,cu.CUSTOMER_NAME as customerName,
+        hd.ORDER_DATE as orderDate,hd.ORDER_STATUS as orderStatus,SUM(lin.UNIT_SELLING_PRICE*ORDERD_QUANTITY) as sumPrice
+    </sql>
+    <sql id="queryone">
+         hd.HEADER_ID as headerId,cp.COMPANY_ID as companyId,cu.CUSTOMER_ID as customerId,
+        hd.ORDER_NUMBER as orderNumber,cp.COMPANY_NAME as companyName,cu.CUSTOMER_NAME as customerName,
+        hd.ORDER_DATE as orderDate,hd.ORDER_STATUS as orderStatus,0 as sumPrice
+    </sql>
+    <select id="queryAll" resultMap="queryResultMap" parameterType="com.hand.sales.dto.OmOrderHeaders">
+        select
+        <include refid="query"/>
+        from
+            hap_org_companys cp,
+            hap_ar_customers cu,
+            hap_om_order_headers hd,
+            hap_om_order_lines lin,
+            hap_inv_inventory_items hi
+        where
+        cp.COMPANY_ID = hd.COMPANY_ID
+        AND
+        cu.CUSTOMER_ID = hd.CUSTOMER_ID
+        AND
+        lin.HEADER_ID = hd.HEADER_ID
+        AND
+        hi.INVENTORY_ITEM_ID = lin.INVENTORY_ITEM_ID
+        <if test="headerId != null">
+            and hd.HEADER_ID = #{headerId}
+        </if>
+        <if test="companyId != null">
+            and cp.COMPANY_ID = #{companyId}
+        </if>
+        <if test="customerId != null">
+            and cu.CUSTOMER_ID = #{customerId}
+        </if>
+        <if test="inventoryItemId != null">
+            and hi.INVENTORY_ITEM_ID = #{inventoryItemId}
+        </if>
+        <if test="companyName != null">
+            and cp.COMPANY_NAME = #{companyName}
+        </if>
+
+        <if test="orderStatus != null">
+            and hd.ORDER_STATUS = #{orderStatus}
+        </if>
+        <if test="customerName != null">
+            and cu.CUSTOMER_NAME = #{customerName}
+        </if>
+        <if test="orderNumber != null">
+            and hd.ORDER_NUMBER = #{orderNumber}
+        </if>
+        <if test="itemCode != null">
+            and hi.ITEM_CODE = #{itemCode}
+        </if>
+        GROUP BY hd.HEADER_ID
+        UNION
+        SELECT
+        <include refid="queryone"/>
+        FROM
+        hap_org_companys cp,
+        hap_ar_customers cu,
+        hap_om_order_headers hd,
+        hap_om_order_lines lin,
+        hap_inv_inventory_items hi
+        WHERE
+        cp.COMPANY_ID = hd.COMPANY_ID
+        AND cu.CUSTOMER_ID = hd.CUSTOMER_ID
+        AND hi.INVENTORY_ITEM_ID = lin.INVENTORY_ITEM_ID
+        AND hd.HEADER_ID NOT in(SELECT HEADER_ID from hap_om_order_lines )
+        <if test="headerId != null">
+            and hd.HEADER_ID = #{headerId}
+        </if>
+        <if test="companyId != null">
+            and cp.COMPANY_ID = #{companyId}
+        </if>
+        <if test="customerId != null">
+            and cu.CUSTOMER_ID = #{customerId}
+        </if>
+        <if test="inventoryItemId != null">
+            and hi.INVENTORY_ITEM_ID = #{inventoryItemId}
+        </if>
+        <if test="companyName != null">
+            and cp.COMPANY_NAME = #{companyName}
+        </if>
+
+        <if test="orderStatus != null">
+            and hd.ORDER_STATUS = #{orderStatus}
+        </if>
+        <if test="customerName != null">
+            and cu.CUSTOMER_NAME = #{customerName}
+        </if>
+        <if test="orderNumber != null">
+            and hd.ORDER_NUMBER = #{orderNumber}
+        </if>
+        <if test="itemCode != null">
+            and hi.ITEM_CODE = #{itemCode}
+        </if>
+        GROUP BY hd.HEADER_ID
+    </select>
+
+</mapper>
